@@ -1,12 +1,11 @@
-import React from 'react';
-import Header from '../Componnents/Header';
-import PageCard from '../Componnents/PageCard';
-import sewing from '../assets/sewing.jpg';
-import Post from '../Componnents/Post';
-import profile from '../assets/profile.jpg';
-import postimage from '../assets/sewing.jpg';
+import React from 'react'
+import Header from '../Componnents/Header'
+import PageCard from '../Componnents/PageCard'
+import cooking from "../assets/cooking.jpg"
+import Post from '../Componnents/Post'
+import profile from "../assets/profile.jpg"
 
-function SewingCommunity() {
+function CookingCommunity() {
   return (
     <div className="flex flex-col  bg-[#e1dddd]">
       {/* Fixed Header */}
@@ -19,9 +18,9 @@ function SewingCommunity() {
         <div className="col-span-1 justify-end ml-[100px] h-full ">
           <div className="fixed top-[120px]">
             <PageCard
-              image={sewing}
-              hobby="Sewing"
-              description="This is the sewing community"
+              image={cooking }
+              hobby="cooking "
+              description="This is the cooking community"
             />
           </div>
         </div>
@@ -32,26 +31,26 @@ function SewingCommunity() {
             <Post
               profile={profile}
               name="Devindi Karunathilaka"
-              caption="This is my new frock"
-              image={postimage}
+              caption="This is my new dish"
+              image={cooking}
             />
             <Post
               profile={profile}
               name="Devindi Karunathilaka"
-              caption="This is another frock I made"
-              image={postimage}
+              caption="This is another dish"
+              image={cooking}
             />
             <Post
               profile={profile}
               name="Devindi Karunathilaka"
-              caption="Sewing is my passion!"
-              image={postimage}
+              caption="new dish"
+              image={cooking}
             />
           </div>
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default SewingCommunity;
+export default CookingCommunity

@@ -4,6 +4,8 @@ import gardning from "../assets/gardning.jpg"
 import painting from "../assets/painting.jpg"
 import reading from "../assets/reading.jpg"
 import sewing from "../assets/sewing.jpg"
+import paperQuiling  from "../assets/paperQuiling.jpg"
+import cooking  from "../assets/cooking.jpg"
 
 function Hobbies() {
   return (
@@ -24,6 +26,14 @@ function Hobbies() {
        <HobbyCard
       image={reading}
       hobby="Reading"
+      />
+      <HobbyCard
+      image={cooking}
+      hobby="Cooking"
+      />
+      <HobbyCard
+      image={paperQuiling}
+      hobby="Paper Quiling"
       />
     </div>
   )

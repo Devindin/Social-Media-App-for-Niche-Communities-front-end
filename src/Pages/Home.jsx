@@ -5,7 +5,7 @@ import Hobbies from '../Componnents/Hobbies'
 
 function Home() {
   return (
-    <div className='bg-[#FFF7D1] w-full h-full p-8'>
+    <div className='bg-[#FFF7D1] w-full h-full p-6'>
       <Navbar/>
       <Hero/>
       <Hobbies/>
