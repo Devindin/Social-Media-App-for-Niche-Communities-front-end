@@ -7,7 +7,7 @@ import profile from "../assets/profile.jpg"
 
 function CookingCommunity() {
   return (
-    <div className="flex flex-col  bg-[#e1dddd]">
+    <div className="flex flex-col  bg-[#FFF7D1]">
       {/* Fixed Header */}
       <div className="fixed top-0 left-0 w-full z-10 bg-[#e1dddd] shadow-md">
         <Header />
