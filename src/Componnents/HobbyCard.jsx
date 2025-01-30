@@ -1,19 +1,76 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Diversity3Icon from '@mui/icons-material/Diversity3';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function HobbyCard({ image, hobby }) {
   const [showPopup, setShowPopup] = useState(false);
   const [isMember, setIsMember] = useState(false); // Track membership status
   const [showSuccessMessage, setShowSuccessMessage] = useState(false); // Track success message visibility
 
+  const navigate = useNavigate();
+
+  // Retrieve userId from local storage (modify as needed based on auth handling)
+  const userId = localStorage.getItem("userId");
+
   const togglePopup = () => {
+    if (!localStorage.getItem("token")) {
+      alert("Please log in to join a community.");
+      return;
+    }
     setShowPopup(!showPopup);
   };
 
-  const handleAgreeAndJoin = () => {
-    setIsMember(true); // Update membership status
-    setShowPopup(false); // Close the main popup
-    setShowSuccessMessage(true); // Show success message
+  const handleAgreeAndJoin = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please log in to join a community.");
+      return;
+    }
+  
+    if (!userId) {
+      alert("User ID not found. Please log in again.");
+      return;
+    }
+  
+    try {
+      const response = await axios.post("http://localhost:3001/joinCommunity", { userId, hobby });
+  
+      if (response.data.message === "Joined successfully") {
+        setIsMember(true);
+        setShowPopup(false);
+        setShowSuccessMessage(true);
+      } else {
+        alert(response.data.error || "Failed to join community.");
+      }
+    } catch (error) {
+      console.error("Error joining community:", error.response?.data || error.message);
+      alert("Failed to join community. Please try again.");
+    }
+  };
+  
+
+
+  useEffect(() => {
+    // Check if the user is a member of this community
+    if (userId) {
+      axios
+        .get(`http://localhost:3001/checkMembership/${userId}/${hobby}`)
+        .then(response => {
+          if (response.data.isMember) setIsMember(true);
+        })
+        .catch(error => console.error("Error checking membership:", error));
+    }
+  }, [userId, hobby]);
+
+
+
+  const handleNavigate = () => {
+    if (isMember) {
+      // Convert hobby name to a valid route (e.g., "Sewing" → "sewingcommunity")
+      const communityPage = `/${hobby.toLowerCase()}community`;
+      navigate(communityPage);
+    }
   };
 
   return (
@@ -25,9 +82,9 @@ function HobbyCard({ image, hobby }) {
           className={`w-[300px] h-[60px] rounded-2xl p-2 text-white cursor-pointer ${
             isMember ? 'bg-[#5dd25f]' : 'bg-[#E82561]'
           }`}
-          onClick={isMember ? null : togglePopup} // Disable toggle when already a member
+          onClick={isMember ? handleNavigate : togglePopup}// Prevents null function
         >
-          {isMember ? 'View Community' : 'Join to Community'}
+          {isMember ? 'View Community' : 'Join Community'}
           <Diversity3Icon className='text-white ml-4' />
         </button>
       </div>
@@ -46,16 +103,10 @@ function HobbyCard({ image, hobby }) {
               <li className="mb-2">Stay on-topic and follow the community's purpose.</li>
             </ul>
             <div className="flex justify-center gap-4">
-              <button
-                className="px-4 py-2 bg-[#E82561] text-white rounded-lg cursor-pointer"
-                onClick={togglePopup}
-              >
+              <button className="px-4 py-2 bg-[#E82561] text-white rounded-lg cursor-pointer" onClick={togglePopup}>
                 Close
               </button>
-              <button
-                className="px-4 py-2 bg-[#5dd25f] text-white rounded-lg cursor-pointer"
-                onClick={handleAgreeAndJoin}
-              >
+              <button className="px-4 py-2 bg-[#5dd25f] text-white rounded-lg cursor-pointer" onClick={handleAgreeAndJoin}>
                 Agree and Join
               </button>
             </div>
@@ -67,11 +118,9 @@ function HobbyCard({ image, hobby }) {
       {showSuccessMessage && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white/30 backdrop-blur-sm p-6 rounded-lg shadow-lg w-[400px] text-center">
+            <h2 className="text-[30px] text-[#E82561] font-bold mb-4">Welcome!</h2>
             <h2 className="text-xl font-bold mb-4">You are now a member of the {hobby} community!</h2>
-            <button
-              className="px-4 py-2 bg-[#5dd25f] text-white rounded-lg cursor-pointer"
-              onClick={() => setShowSuccessMessage(false)} // Close the success message
-            >
+            <button className="px-4 py-2 bg-[#5dd25f] text-white rounded-lg cursor-pointer" onClick={() => setShowSuccessMessage(false)}>
               Close
             </button>
           </div>

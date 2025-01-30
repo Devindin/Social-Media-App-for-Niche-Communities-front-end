@@ -1,21 +1,49 @@
-import React from "react";
+import React ,{useState} from "react";
 import bgimage from "../assets/bgImage.jpg";
 import profile from "../assets/profile.jpg";
 import InputField from "../Componnents/InputField.jsx";
 import { Formik, Field, Form } from "formik";
 import Button from "../Componnents/Button.jsx";
 import * as Yup from "yup";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function SignIn() {
+
+  const [loginError , setLoginError] = useState(null);
+  const navigate = useNavigate();
+
+  const handleLogin = async (values) => {
+    try {
+      const response = await axios.post("http://localhost:3001/userLogin", values);
+      const { token, userId } = response.data; // Extract userId from response
+      
+      localStorage.setItem("token", token);
+      localStorage.setItem("userId", userId); 
+  
+      console.log("Stored UserID:", userId);
+  
+      setTimeout(() => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+      }, 10 * 60 * 1000); 
+  
+      navigate("/");
+    } catch (error) {
+      console.error("Login error:", error);
+      setLoginError("Login failed. Please try again.");
+    }
+  };
+  
 
   const LoginSchema = Yup.object().shape({
      email: Yup.string().required("Required"),
      password: Yup.string()
       .min(6,("Password must be atleast 6 characters"))
-      .min(/[0-9]/,("Password requires a number"))
-      .min(/[a-z]/,("Password requires a lower case latter"))
-      .min(/[A-Z]/,("Password requires a upper case latter"))
-      .min(/[^\w]/,("Password requires a symbol"))
+      .matches(/[0-9]/,("Password requires a number"))
+      .matches(/[a-z]/,("Password requires a lower case latter"))
+      .matches(/[A-Z]/,("Password requires a upper case latter"))
+      .matches(/[^\w]/,("Password requires a symbol"))
       .required("Required")
 
   })
@@ -35,9 +63,7 @@ function SignIn() {
       {/* Formik Form */}
       <Formik
         initialValues={{ email: "", password: "" }}
-        onSubmit={(values) => {
-          console.log("Form Values:", values);
-        }}
+        onSubmit={handleLogin}
         validationSchema={LoginSchema}
       >
         {({ handleSubmit }) => (
