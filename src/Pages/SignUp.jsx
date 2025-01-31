@@ -30,11 +30,11 @@ function SignUp() {
   };
 
   const countryOptions = [
-    { label: "Sri Lanka", value: "SL" },
-    { label: "United States", value: "US" },
-    { label: "India", value: "IN" },
-    { label: "Canada", value: "CA" },
-    { label: "Australia", value: "AU" },
+    { label: "Sri Lanka", value: "Sri Lanka" },
+    { label: "United States", value: "United States" },
+    { label: "India", value: "India" },
+    { label: "Canada", value: "Canada" },
+    { label: "Australia", value: "Australia" },
   ];
 
   const SignupSchema = Yup.object().shape({
