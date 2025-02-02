@@ -5,7 +5,7 @@ import sewing from "../assets/sewing.jpg";
 import Post from "../Componnents/Post";
 import profile from "../assets/profile.jpg";
 import postimage from "../assets/sewing.jpg";
-import PermMediaIcon from "@mui/icons-material/PermMedia";
+import CreatePost from "../Componnents/CreatePost";
 import axios from "axios";
 
 function SewingCommunity() {
@@ -23,9 +23,9 @@ function SewingCommunity() {
 
   const handleMediaSelection = (event) => {
     const files = Array.from(event.target.files);
-    const fileURLs = files.map((file) => URL.createObjectURL(file)); // Create preview URLs
-    setSelectedMedia(fileURLs);
+    setSelectedMedia((prevMedia) => [...prevMedia, ...files]); // Store File objects
   };
+  
 
   return (
     <div className="flex flex-col bg-[#FFF7D1]">
@@ -57,71 +57,15 @@ function SewingCommunity() {
         </div>
       </div>
 
-      {/* Popup */}
-      {showPopup && (
-        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
-          <div className="w-[600px] max-h-[80vh] bg-white p-6 rounded-xl shadow-lg relative overflow-y-auto">
-            <div className="flex flex-row justify-start items-center gap-2">
-              <img src={profile} alt="" className="rounded-full w-[50px]" />
-              <h1>Devindi Karunathilaka</h1>
-            </div>
-            <textarea className="w-full h-[150px] p-2 border border-gray-300 rounded-md mt-2" placeholder="Write something..." />
-
-            {/* File Upload Button */}
-            <label htmlFor="media-upload" className="cursor-pointer flex items-center mt-4 text-blue-500">
-              <PermMediaIcon className="mr-2" />
-              Select Photos/Videos
-            </label>
-            <input
-              id="media-upload"
-              type="file"
-              accept="image/*,video/*"
-              multiple
-              className="hidden"
-              onChange={handleMediaSelection}
-            />
-
-            {/* Display selected media */}
-            {selectedMedia.length > 0 && (
-              <div className="mt-4">
-                {showAllMedia ? (
-                  // Show all media in a grid
-                  <div className="grid grid-cols-3 gap-2">
-                    {selectedMedia.map((media, index) => (
-                      <img key={index} src={media} alt="Selected Media" className="w-full h-[100px] object-cover rounded-md" />
-                    ))}
-                  </div>
-                ) : (
-                  // Show only first 4 items in a 2x2 collage
-                  <div className="grid grid-cols-2 gap-2 relative">
-                    {selectedMedia.slice(0, 4).map((media, index) => (
-                      <img key={index} src={media} alt="Selected Media" className="w-full h-[100px] object-cover rounded-md" />
-                    ))}
-                    {selectedMedia.length > 4 && (
-                      <button
-                        className="absolute bottom-2 right-2 bg-black/50 text-white p-2 rounded-md"
-                        onClick={() => setShowAllMedia(true)}
-                      >
-                        +{selectedMedia.length - 4} more
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Close Button */}
-            <button className="absolute top-2 right-2 text-red-500 font-bold cursor-pointer" onClick={togglePopup}>
-              ✖
-            </button>
-
-            {/* Post Button */}
-            <button className="w-full mt-4 bg-[#8B5DFF] text-white p-2 rounded-md cursor-pointer">
-              Post
-            </button>
-          </div>
-        </div>
-      )}
+      <CreatePost
+        profile={profile}
+        showPopup={showPopup}
+        togglePopup={togglePopup}
+        handleMediaSelection={handleMediaSelection}
+        selectedMedia={selectedMedia}
+        setShowAllMedia={setShowAllMedia}
+        showAllMedia={showAllMedia}
+      />
     </div>
   );
 }

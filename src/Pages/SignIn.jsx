@@ -26,7 +26,7 @@ function SignIn() {
       setTimeout(() => {
         localStorage.removeItem("token");
         localStorage.removeItem("userId");
-      }, 10 * 60 * 1000); 
+      }, 5 * 60 * 1000); 
   
       navigate("/");
     } catch (error) {
