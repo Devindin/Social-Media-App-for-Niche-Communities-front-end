@@ -6,26 +6,19 @@ import Post from "../Componnents/Post";
 import profile from "../assets/profile.jpg";
 import postimage from "../assets/sewing.jpg";
 import CreatePost from "../Componnents/CreatePost";
-import axios from "axios";
 
 function SewingCommunity() {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState([]);
   const [showAllMedia, setShowAllMedia] = useState(false);
   const [community, setCommunity] = useState("Sewing");
-   const [user] = useState({ name: "Devindi Karunathilaka" });
+  const [user] = useState({ name: "Devindi Karunathilaka" });
 
   const togglePopup = () => {
     setShowPopup(!showPopup);
     setSelectedMedia([]); // Clear media when closing popup
     setShowAllMedia(false); // Reset media view
   };
-
-  const handleMediaSelection = (event) => {
-    const files = Array.from(event.target.files);
-    setSelectedMedia((prevMedia) => [...prevMedia, ...files]); // Store File objects
-  };
-  
 
   return (
     <div className="flex flex-col bg-[#FFF7D1]">
@@ -38,12 +31,7 @@ function SewingCommunity() {
         {/* Fixed PageCard */}
         <div className="col-span-1 justify-end ml-[100px] h-full">
           <div className="fixed top-[120px]">
-            <PageCard
-              image={sewing}
-              hobby="Sewing"
-              description="This is the sewing community"
-              togglePopup={togglePopup} // Pass function to PageCard
-            />
+            <PageCard image={sewing} hobby="Sewing" description="This is the sewing community" togglePopup={togglePopup} />
           </div>
         </div>
 
@@ -61,8 +49,8 @@ function SewingCommunity() {
         profile={profile}
         showPopup={showPopup}
         togglePopup={togglePopup}
-        handleMediaSelection={handleMediaSelection}
         selectedMedia={selectedMedia}
+        setSelectedMedia={setSelectedMedia}
         setShowAllMedia={setShowAllMedia}
         showAllMedia={showAllMedia}
       />

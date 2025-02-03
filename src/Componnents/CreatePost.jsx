@@ -2,16 +2,10 @@ import React, { useState, useEffect } from "react";
 import PermMediaIcon from "@mui/icons-material/PermMedia";
 import axios from "axios";
 
-function CreatePost({
-  profile,
-  showPopup,
-  togglePopup,
-  selectedMedia,
-  setSelectedMedia,
-  setShowAllMedia,
-}) {
+function CreatePost({ profile, showPopup, togglePopup, selectedMedia, setSelectedMedia, hobby }) {
   const [userData, setUserData] = useState(null);
   const [caption, setCaption] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -28,39 +22,43 @@ function CreatePost({
     fetchUserData();
   }, []);
 
-  const handleFileChange = (event) => {
-    const newFiles = Array.from(event.target.files);
-    setSelectedMedia((prevMedia) => [...prevMedia, ...newFiles]); // Append new files
+  const handleMediaSelection = (event) => {
+    const files = Array.from(event.target.files);
+    setSelectedMedia((prevMedia) => [...prevMedia, ...files]);
   };
 
-  const removeMedia = (index) => {
-    setSelectedMedia((prevMedia) => prevMedia.filter((_, i) => i !== index));
-  };
+  const handleSubmit = async () => {
+    if (!caption || selectedMedia.length === 0) {
+      alert("Caption and media are required!");
+      return;
+    }
 
-  const handlePost = async () => {
-    if (!userData) return;
+    setLoading(true);
 
     const formData = new FormData();
-    formData.append("name", userData.name);
+    formData.append("name", userData?.name || "Anonymous");
     formData.append("caption", caption);
     formData.append("createdAt", new Date().toISOString());
+    formData.append("community", hobby); // Get community name from props
 
     selectedMedia.forEach((file) => {
       formData.append("media", file);
     });
 
     try {
-      await axios.post("http://localhost:3001/addPost", formData, {
+      const response = await axios.post("http://localhost:3001/addPost", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      alert("Post added successfully!");
+      alert(response.data.message);
       setCaption("");
       setSelectedMedia([]);
-      togglePopup();
+      togglePopup(); // Close popup after submission
     } catch (error) {
       console.error("Error adding post:", error);
-      alert("Failed to add post");
+      alert("Failed to create post!");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -88,57 +86,32 @@ function CreatePost({
         <input
           id="media-upload"
           type="file"
-          accept="image/*,video/*"
           multiple
+          accept="image/*,video/*"
+          onChange={handleMediaSelection}
           className="hidden"
-          onChange={handleFileChange}
         />
 
-        {selectedMedia.length > 0 && (
-          <div className="mt-4 grid grid-cols-2 gap-2">
-            {selectedMedia.map((media, index) => {
-              const mediaUrl = URL.createObjectURL(media);
-              return (
-                <div key={index} className="relative">
-                  {media.type.startsWith("image/") ? (
-                    <img
-                      src={mediaUrl}
-                      alt="Selected"
-                      className="w-full h-[100px] object-cover rounded-md"
-                    />
-                  ) : media.type.startsWith("video/") ? (
-                    <video
-                      src={mediaUrl}
-                      controls
-                      className="w-full h-[100px] object-cover rounded-md"
-                    />
-                  ) : (
-                    <div className="text-red-500">Invalid file type</div>
-                  )}
-                  <button
-                    onClick={() => removeMedia(index)}
-                    className="absolute top-1 right-1 bg-red-500 text-white text-xs rounded-full p-1"
-                  >
-                    ✖
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        )}
+        <div className="mt-4 flex flex-wrap gap-2">
+          {selectedMedia.map((file, index) => (
+            <div key={index} className="relative w-[100px] h-[100px]">
+              <img src={URL.createObjectURL(file)} alt="Preview" className="w-full h-full object-cover rounded-md" />
+              <button
+                className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 text-xs"
+                onClick={() => setSelectedMedia(selectedMedia.filter((_, i) => i !== index))}
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+        </div>
 
         <button
-          onClick={handlePost}
-          className="w-full mt-4 bg-[#8B5DFF] text-white p-2 rounded-md cursor-pointer"
+          onClick={handleSubmit}
+          className="w-full bg-blue-600 text-white p-2 rounded-lg mt-4"
+          disabled={loading}
         >
-          Post
-        </button>
-
-        <button
-          className="absolute top-2 right-2 text-red-500 font-bold cursor-pointer"
-          onClick={togglePopup}
-        >
-          ✖
+          {loading ? "Posting..." : "Post"}
         </button>
       </div>
     </div>
