@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import PermMediaIcon from "@mui/icons-material/PermMedia";
 import axios from "axios";
+import profile from "../assets/profile.jpg";
 
-function CreatePost({ profile, showPopup, togglePopup, selectedMedia, setSelectedMedia, hobby }) {
+function CreatePost({ showPopup, togglePopup, selectedMedia, setSelectedMedia, hobby }) {
   const [userData, setUserData] = useState(null);
   const [caption, setCaption] = useState("");
   const [loading, setLoading] = useState(false);
@@ -64,9 +65,24 @@ function CreatePost({ profile, showPopup, togglePopup, selectedMedia, setSelecte
 
   if (!showPopup) return null;
 
+  useEffect(() => {
+    if (showPopup) {
+      document.body.style.overflow = "hidden"; // Prevent background scrolling
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [showPopup]);
+
   return (
-    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
       <div className="w-[600px] max-h-[80vh] bg-white p-6 rounded-xl shadow-lg relative overflow-y-auto">
+        <button
+          className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 text-xs"
+          onClick={togglePopup}
+        >
+          ✕
+        </button>
+
         <div className="flex flex-row justify-start items-center gap-2">
           <img src={profile} alt="Profile" className="rounded-full w-[50px]" />
           <h1>{userData ? userData.name : "Loading..."}</h1>
