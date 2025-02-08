@@ -1,4 +1,3 @@
-// SewingCommunity.js
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Header from "../Componnents/Header";
@@ -16,14 +15,16 @@ function SewingCommunity() {
 
   const togglePopup = () => {
     setShowPopup(!showPopup);
-    setSelectedMedia([]); // Clear media when closing popup
+    setSelectedMedia([]); 
   };
 
-  // Fetch posts for the current community when the component mounts or the community changes
+  // Fetch posts 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/getPosts/${community}`);
+        const response = await axios.get(
+          `http://localhost:3001/getPosts/${community}`
+        );
         setPosts(response.data);
       } catch (error) {
         console.error("Error fetching posts:", error);
@@ -61,12 +62,12 @@ function SewingCommunity() {
             ) : (
               posts.map((post) => (
                 <Post
-  key={post._id}
-  profile={profile}
-  name={post.name}
-  caption={post.caption}
-  images={post.media} // Pass the entire media array
-/>
+                  key={post._id}
+                  profile={profile}
+                  name={post.name}
+                  caption={post.caption}
+                  images={post.media} 
+                />
               ))
             )}
           </div>
