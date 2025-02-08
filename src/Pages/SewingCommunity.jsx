@@ -61,12 +61,12 @@ function SewingCommunity() {
             ) : (
               posts.map((post) => (
                 <Post
-                  key={post._id}
-                  profile={profile}
-                  name={post.name}
-                  caption={post.caption}
-                  image={post.media[0]} // Use the first media file as the image, adjust as needed
-                />
+  key={post._id}
+  profile={profile}
+  name={post.name}
+  caption={post.caption}
+  images={post.media} // Pass the entire media array
+/>
               ))
             )}
           </div>

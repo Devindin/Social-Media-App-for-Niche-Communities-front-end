@@ -40,7 +40,7 @@ function CreatePost({ showPopup, togglePopup, selectedMedia, setSelectedMedia, h
     formData.append("name", userData?.name || "Anonymous");
     formData.append("caption", caption);
     formData.append("createdAt", new Date().toISOString());
-    formData.append("community", hobby); // Get community name from props
+    formData.append("community", hobby);
 
     selectedMedia.forEach((file) => {
       formData.append("media", file);
@@ -54,7 +54,7 @@ function CreatePost({ showPopup, togglePopup, selectedMedia, setSelectedMedia, h
       alert(response.data.message);
       setCaption("");
       setSelectedMedia([]);
-      togglePopup(); // Close popup after submission
+      togglePopup();
     } catch (error) {
       console.error("Error adding post:", error);
       alert("Failed to create post!");
@@ -74,8 +74,8 @@ function CreatePost({ showPopup, togglePopup, selectedMedia, setSelectedMedia, h
   }, [showPopup]);
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
-      <div className="w-[600px] max-h-[80vh] bg-white p-6 rounded-xl shadow-lg relative overflow-y-auto">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-[999] w-[650px]">
+      <div className="w-[600px] max-h-[80vh] bg-white p-6 rounded-xl shadow-2xl relative overflow-auto">
         <button
           className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 text-xs"
           onClick={togglePopup}
