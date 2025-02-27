@@ -7,11 +7,11 @@ function HobbyCard({ image, hobby }) {
   const [showPopup, setShowPopup] = useState(false);
   const [isMember, setIsMember] = useState(false); // Track membership status
   const [showSuccessMessage, setShowSuccessMessage] = useState(false); // Track success message visibility
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const navigate = useNavigate();
-
-  // Retrieve userId from local storage (modify as needed based on auth handling)
   const userId = localStorage.getItem("userId");
+  const token = localStorage.getItem("token");
 
   const togglePopup = () => {
     if (!localStorage.getItem("token")) {
@@ -19,6 +19,36 @@ function HobbyCard({ image, hobby }) {
       return;
     }
     setShowPopup(!showPopup);
+  };
+
+
+  useEffect(() => {
+    // Check if user is authenticated
+    setIsAuthenticated(!!token && !!userId);
+
+    // Check membership status only if authenticated
+    if (token && userId) {
+      axios
+        .get(`http://localhost:3001/checkMembership/${userId}/${hobby}`)
+        .then(response => {
+          if (response.data.isMember) setIsMember(true);
+        })
+        .catch(error => console.error("Error checking membership:", error));
+    }
+  }, [userId, hobby, token]);
+
+  const handleButtonClick = () => {
+    if (!isAuthenticated) {
+      navigate('/signin');
+      return;
+    }
+
+    if (isMember) {
+      const communityPage = `/${hobby.toLowerCase()}community`;
+      navigate(communityPage);
+    } else {
+      setShowPopup(true);
+    }
   };
 
   const handleAgreeAndJoin = async () => {
@@ -51,19 +81,6 @@ function HobbyCard({ image, hobby }) {
   
 
 
-  useEffect(() => {
-    // Check if the user is a member of this community
-    if (userId) {
-      axios
-        .get(`http://localhost:3001/checkMembership/${userId}/${hobby}`)
-        .then(response => {
-          if (response.data.isMember) setIsMember(true);
-        })
-        .catch(error => console.error("Error checking membership:", error));
-    }
-  }, [userId, hobby]);
-
-
 
   const handleNavigate = () => {
     if (isMember) {
@@ -82,9 +99,10 @@ function HobbyCard({ image, hobby }) {
           className={`w-[300px] h-[60px] rounded-2xl p-2 text-white cursor-pointer ${
             isMember ? 'bg-[#5dd25f]' : 'bg-[#E82561]'
           }`}
-          onClick={isMember ? handleNavigate : togglePopup}// Prevents null function
+          onClick={handleButtonClick}
         >
-          {isMember ? 'View Community' : 'Join Community'}
+          {!isAuthenticated ? 'Join Community' : 
+           isMember ? 'View Community' : 'Join Community'}
           <Diversity3Icon className='text-white ml-4' />
         </button>
       </div>
